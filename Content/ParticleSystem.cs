@@ -52,7 +52,7 @@ namespace ParticleEngine
 
             foreach (Particle particle in particle.Where((Particle p) => p.shader == null))
             {
-                if (new Rectangle((int)particle.position.X - 3, (int)particle.position.Y - 3, 6, 6).Intersects(value) && Main.netMode != 2)
+                if (new Rectangle((int)particle.position.X - 3, (int)particle.position.Y - 3, 6, 6).Intersects(value) && Main.netMode != NetmodeID.Server)
                 {
                     particle.Draw(spriteBatch);
                 }
