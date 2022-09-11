@@ -27,10 +27,8 @@ namespace ParticleEngine
 
         public static void UpdateParticles()
         {
-            if (Main.dedServ || Main.gamePaused)
-            {
+            if (Main.dedServ || Main.gamePaused || Main.netMode == NetmodeID.Server)
                 return;
-            }
 
             foreach (Particle item in particle.ToList())
             {
@@ -44,7 +42,7 @@ namespace ParticleEngine
 
         public static void DrawParticles(SpriteBatch spriteBatch)
         {
-            if (Main.dedServ)
+            if (Main.dedServ || Main.gameMenu || Main.netMode == NetmodeID.Server)
                 return;
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
@@ -52,19 +50,21 @@ namespace ParticleEngine
 
             foreach (Particle particle in particle.Where((Particle p) => p.shader == null))
             {
-                if (new Rectangle((int)particle.position.X - 3, (int)particle.position.Y - 3, 6, 6).Intersects(value) && Main.netMode != NetmodeID.Server)
+                if (new Rectangle((int)particle.position.X - 3, (int)particle.position.Y - 3, 6, 6).Intersects(value))
                 {
                     particle.Draw(spriteBatch);
                 }
             }
 
-            foreach (Particle item2 in particle.Where((Particle p) => p.shader != null))
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+
+            foreach (Particle particle2 in particle.Where((Particle p) => p.shader != null))
             {
-                if (new Rectangle((int)item2.position.X - 3, (int)item2.position.Y - 3, 6, 6).Intersects(value) && Main.netMode != NetmodeID.Server)
+                if (new Rectangle((int)particle2.position.X - 3, (int)particle2.position.Y - 3, 6, 6).Intersects(value))
                 {
-                    item2.emit = false;
-                    item2.shader.Apply(null);
-                    item2.Draw(spriteBatch);
+                    particle2.shader.Apply();
+                    particle2.Draw(spriteBatch);
                     Main.pixelShader.CurrentTechnique.Passes[0].Apply();
                 }
             }
