@@ -63,7 +63,7 @@ namespace ParticleEngine
             {
                 if (new Rectangle((int)particle2.position.X - 3, (int)particle2.position.Y - 3, 6, 6).Intersects(value))
                 {
-                    particle2.shader.Apply();
+                    particle2.shader.Apply(null);
                     particle2.Draw(spriteBatch);
                     Main.pixelShader.CurrentTechnique.Passes[0].Apply();
                 }
